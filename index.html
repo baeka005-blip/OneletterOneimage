@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allie's Cafe</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="images/teaicon.png" type="image/x-icon">
+</head>
+<body>
+
+    <h1 class="title">Hi! May I take your order? ^-^</h1>
+    <h2 id="instructionHeader">Click here to view menu!</h2>
+
+    <div class="search-container">
+        <input type="text" id="charInput" maxlength="1">
+        <button onclick="displayImage()" id="submitButton">enjoy!</button>
+    </div>
+
+    <button id="refundButton">Refund</button>
+    <img id="letterImage" src="" alt="out of stock..">
+    <img id="gifImage" src="images/random.gif" alt="Random GIF">
+
+    
+    <div id="menuContainer">
+        <button id="closeMenuButton">×</button>
+        <img id="menuImage" src="images/menu.png" alt="Menu" />
+    </div>
+
+    <div id="dragHint">CLICK ON THE MENU</div>
+
+    <script>
+    // IMAGE LIST (A–Z)
+const images = {
+    "A": "images/affocato.jpeg",
+    "B": "images/bread.jpeg",
+    "C": "images/croissant.jpeg",
+    "D": "images/donut.jpeg",
+    "E": "images/egg.jpeg",
+    "F": "images/fruit.jpeg",
+    "G": "images/G.jpeg",
+    "H": "images/honeylatte.jpeg",
+    "I": "images/i.jpeg",
+    "J": "images/jam.jpeg",
+    "K": "images/K.jpeg",
+    "L": "images/light.jpeg",
+    "M": "images/milk.jpeg",
+    "N": "images/napolean.jpeg",
+    "O": "images/o.jpeg",
+    "P": "images/pudding.jpeg",
+    "Q": "images/q.jpeg",
+    "R": "images/r.jpeg",
+    "S": "images/sandwich.jpeg",
+    "T": "images/tea.jpeg",
+    "U": "images/u.jpeg",
+    "V": "images/v.jpeg",
+    "W": "images/waffle.jpeg",
+    "X": "images/x.jpeg",
+    "Y": "images/y.jpeg",
+    "Z": "images/z.jpeg"
+};
+
+const inputField = document.getElementById("charInput");
+const letterImg = document.getElementById("letterImage");
+const gifImg = document.getElementById("gifImage");
+const menuContainer = document.getElementById("menuContainer");
+const menuImg = document.getElementById("menuImage");
+const closeMenuButton = document.getElementById("closeMenuButton");
+const refundBtn = document.getElementById("refundButton");
+const dragHint = document.getElementById("dragHint");
+const instructionHeader = document.getElementById("instructionHeader");
+let hasUsedMenu = false;
+
+
+function displayImage() {
+    
+
+    let letter = inputField.value.trim().toUpperCase();
+
+    if (letter === "") {
+    gifImg.style.display = "block";
+    letterImg.style.display = "none";
+    refundBtn.style.display = "none";
+    } else if (images[letter]) {
+        letterImg.src = images[letter];
+        letterImg.style.display = "block";
+
+        gifImg.style.display = "none";
+        refundBtn.style.display = "block";
+        dragHint.style.display = "none";
+    } else {
+        gifImg.style.display = "block";
+        letterImg.style.display = "none";
+        refundBtn.style.display = "none";
+        dragHint.style.display = "none";
+    }
+}
+
+inputField.addEventListener("keypress", function(event) {
+    if (event.key === "Enter") displayImage();
+});
+
+refundBtn.addEventListener("click", function() {
+    letterImg.style.display = "none";
+    refundBtn.style.display = "none";
+    inputField.value = "";
+});
+
+
+closeMenuButton.addEventListener("click", () => {
+    menuContainer.style.animation = "popClose 0.3s forwards";
+    setTimeout(() => {
+        menuContainer.style.display = "none";
+        menuContainer.style.animation = ""; 
+        instructionHeader.style.display = "block"; // 👈 show h2 again
+    }, 300);
+});
+
+
+let isDragging = false;
+let offsetX = 0;
+let offsetY = 0;
+
+menuImg.addEventListener("click", function(e) {
+    
+    if (e.target === closeMenuButton) return;
+
+    isDragging = !isDragging; 
+
+    if (isDragging) {
+        dragHint.style.display = "none";
+        hasUsedMenu = true; //  permanently disable hint 
+
+        const rect = menuContainer.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+
+        menuContainer.style.cursor = "grabbing";
+    } else {
+        menuContainer.style.cursor = "grab";
+    }
+});
+
+document.addEventListener("mousemove", function(e) {
+    if (isDragging) {
+        menuContainer.style.left = e.clientX - offsetX + "px";
+        menuContainer.style.top = e.clientY - offsetY + "px";
+        menuContainer.style.transform = "none";
+    }
+});
+
+instructionHeader.addEventListener("click", function() {
+    menuContainer.style.display = "block";
+
+    if (!hasUsedMenu) {
+        dragHint.style.display = "block";
+    }
+
+    instructionHeader.style.display = "none";
+
+    menuImg.classList.add("showing");
+    setTimeout(() => menuImg.classList.remove("showing"), 1000);
+});
+
+
+    </script>
+
+</body>
+</html>
